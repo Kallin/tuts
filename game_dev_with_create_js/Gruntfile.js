@@ -49,7 +49,7 @@ module.exports = function (grunt) {
                 livereload: true
             },
             scripts: {
-                files: ['app/lib/**/*.js', 'app/*.html'],
+                files: ['app/css/*.css','app/lib/**/*.js', 'app/*.html'],
                 tasks: ['build']
             }
         }
