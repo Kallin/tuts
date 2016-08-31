@@ -1,29 +1,51 @@
 'use strict';
 
-var domReady = require('./util/dom_ready');
-var Hero = require('./Hero');
+var domReady = require('./util').domReady
+    , levels = require('./levels')
+    , Hero = require('./Hero')
+    , Diamond = require('./Diamond')
+    , Box = require('./Box')
+    , Block = require('./Block');
 
-var c = createjs;
+var classMap = {
+    '1': Block,
+    '2': Diamond,
+    '3': Box,
+    '4': Hero
+};
 
-console.log('Game Started!: EaselJS version: ' + c.EaselJS.version);
+var c = createjs
+    , stage
+    , mapGroup;
+
+console.log('Game Started: EaselJS version: ' + c.EaselJS.version);
+
 
 domReady(function init() {
-    var stage = new c.Stage('main');
+    prepareWorld();
+    stage.update();
+});
 
-    var hero1 = new Hero('Hero 1', 50, 50);
-    stage.addChild(hero1);
 
-    var hero2 = new Hero('Hero 2', 150, 50);
-    stage.addChild(hero2);
+function prepareWorld() {
+    stage = new c.Stage('main');
+    mapGroup = new c.Container();
+    mapGroup.x = 50;
+    mapGroup.y = 50;
+    stage.addChild(mapGroup);
 
-    console.log(stage);
+    var map = levels[0].map;
+    var tiles = [];
 
-    c.Ticker.timingMode = c.Ticker.RAF;
-    c.Ticker.setFPS(60);
-    c.Ticker.addEventListener('tick', function(event) {
-        stage.update({
-            delta: event.delta
+    map.forEach(function (row, indexY) {
+        tiles.push([]);
+        row.forEach(function (tile, indexX) {
+            var TileClass = classMap[tile];
+            if (TileClass) {
+                var newTile = new TileClass(indexX, indexY);
+                mapGroup.addChild(newTile);
+                tiles[indexY][indexX] = newTile;
+            }
         });
     });
-
-});
+}
